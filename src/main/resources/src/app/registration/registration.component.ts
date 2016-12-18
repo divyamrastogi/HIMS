@@ -108,6 +108,7 @@ export class RegistrationComponent implements OnInit {
 	}
 
 	registerPatient(): void {
+		this.registration.basicInfo.dob = $('#dob').val();
 		this.hospitalService.registerPatient(this.registration);
 	}
 
@@ -116,6 +117,7 @@ export class RegistrationComponent implements OnInit {
 			selectMonths: true, // Creates a dropdown to control month
 			selectYears: 100, // Creates a dropdown of 15 years to control year
 			max: true,
+			format: 'yyyy-mm-dd',
 			onSet: function(arg: any) {
 				if ('select' in arg) { //prevent closing on selecting month/year
 					this.close();
