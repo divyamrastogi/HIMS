@@ -31,4 +31,6 @@ public interface PatientRegistrationService {
 	
 	public RegisterResponse register(RegisterRequest request);
 
+	public int getTurnNo();
+
 }

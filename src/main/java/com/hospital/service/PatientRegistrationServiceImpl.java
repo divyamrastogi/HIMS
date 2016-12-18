@@ -62,6 +62,10 @@ public class PatientRegistrationServiceImpl implements PatientRegistrationServic
 		return hospitalDAO.getAuthorisations();
 	}
 
+	public int getTurnNo() {
+		return hospitalDAO.getTurnNo();
+	}
+
 	@Override
 	public RegisterResponse register(RegisterRequest request) {
 		

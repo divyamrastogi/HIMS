@@ -220,10 +220,9 @@ public class Controller {
 			init();
 		}
 		try {
-			List<Bank> banks = patientRegistrationService.getBanks();
+			int turn = patientRegistrationService.getTurnNo();
 			response.setContentType("application/json");
-			response.getWriter().write(gson.toJson(banks));
-			// String data = IOUtils.toString(inputStream);
+			response.getWriter().write("{\"turn\":" + turn+"}");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -263,10 +262,11 @@ public class Controller {
 		String username = null;
 		String password = null;
 
+		Gson gson = new Gson();
 		String jsonBody = "";
 		try {
 			jsonBody = getJsonBody(request);
-			LoginRequest req = null;//new ObjectMapper().readValue(jsonBody, LoginRequest.class);
+			LoginRequest req = gson.fromJson(jsonBody,LoginRequest.class);
 			username = req.getUsername();
 			password = req.getPassword();
 		} catch (Exception e) {

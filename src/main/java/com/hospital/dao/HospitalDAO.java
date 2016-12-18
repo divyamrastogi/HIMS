@@ -399,4 +399,29 @@ public class HospitalDAO {
 		}
 		return 0;
 	}
+
+	public int getTurnNo() {
+		String stmt = "select count(*) count from PATIENTSREGISTRAION where REGDT >= ?";
+		Connection con = jdbcConnectionPool.getConnectionFromPool();
+		List<Source> sources = new ArrayList<Source>();
+		int res = 0;
+		try {
+			PreparedStatement prepstmt = con.prepareStatement(stmt);
+
+			java.util.Date dt = new java.util.Date();
+			dt.setHours(0);
+			Date date = new Date(dt.getTime());
+			prepstmt.setDate(1, date);
+			ResultSet result = prepstmt.executeQuery();
+			while (result.next()) {
+				res = result.getInt("count");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("HospitalDAO.getTurnNo() - db operation failed." + e.getMessage());
+		} finally {
+			jdbcConnectionPool.returnConnectionToPool(con);
+		}
+		return res+1;
+	}
 }
