@@ -6076,7 +6076,13 @@ webpackJsonp([0],{
 	        this.updateTextFields();
 	    };
 	    RegistrationComponent.prototype.setBalanceAmount = function (netAmount, paidAmount) {
-	        this.registration.paymentDetails.balance = netAmount - paidAmount;
+	        if (paidAmount <= netAmount) {
+	            this.registration.paymentDetails.balance = netAmount - paidAmount;
+	        }
+	        else {
+	            this.registration.paymentDetails.paidAmount = '';
+	            Materialize.toast('You are trying adding more paid amount than the bill.', 4000);
+	        }
 	        this.updateTextFields();
 	    };
 	    RegistrationComponent.prototype.updateTextFields = function () {
@@ -6093,9 +6099,7 @@ webpackJsonp([0],{
 	        this.updateTextFields();
 	    };
 	    RegistrationComponent.prototype.selectCity = function (location) {
-	        this.registration.address.state = location.state;
-	        this.registration.address.district = location.district;
-	        this.registration.address.city = location.name;
+	        this.registration.address = Object.assign(this.registration.address, location);
 	        this.cities = null;
 	        Materialize.updateTextFields();
 	    };
@@ -6313,4 +6317,4 @@ webpackJsonp([0],{
 /***/ }
 
 });
-//# sourceMappingURL=app.5d224434bd8a4ac9ecef.js.map
+//# sourceMappingURL=app.e094be391b2f1a635c96.js.map
