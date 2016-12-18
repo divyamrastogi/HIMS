@@ -4,6 +4,7 @@ import { ActivatedRoute, Params }   from '@angular/router';
 import { Registration } from './registration';
 import { Subject } from 'rxjs/Subject';
 import 'rxjs/add/operator/debounceTime';
+import 'rxjs/add/operator/distinctUntilChanged';
 
 import { HospitalService } from '../services/hospital.service';
 
@@ -123,6 +124,7 @@ export class RegistrationComponent implements OnInit {
 		});
 		this.term$
 			.debounceTime(400)
+			.distinctUntilChanged()
 			.subscribe(term => this.getCities(term))
 		this.getTurnNumber();
 		this.getDepartments();
