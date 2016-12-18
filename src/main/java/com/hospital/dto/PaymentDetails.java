@@ -1,47 +1,47 @@
 package com.hospital.dto;
 
-import com.hospital.constants.HospitalConstants.PaymentMode;
-
 public class PaymentDetails {
 
-	private double totalAmount;
-	private double discountPercentage;
-	private double discountAmount;
-	private double netPayableAmount;
+	private double total;
+	private double discount;
+	private double netAmount;
+	private String discountDetails;
 	private double paidAmount;
-	private double balanceAmount;
-	private PaymentMode paymentMode;
+	private double balance;
+	private String paymentMode;
+	private String bank;
+	private String cardNumber;
 
-	public double getTotalAmount() {
-		return totalAmount;
+	public double getTotal() {
+		return total;
 	}
 
-	public void setTotalAmount(double totalAmount) {
-		this.totalAmount = totalAmount;
+	public void setTotal(double total) {
+		this.total = total;
 	}
 
-	public double getDiscountPercentage() {
-		return discountPercentage;
+	public double getDiscount() {
+		return discount;
 	}
 
-	public void setDiscountPercentage(double discountPercentage) {
-		this.discountPercentage = discountPercentage;
+	public void setDiscount(double discount) {
+		this.discount = discount;
 	}
 
-	public double getDiscountAmount() {
-		return discountAmount;
+	public double getNetAmount() {
+		return netAmount;
 	}
 
-	public void setDiscountAmount(double discountAmount) {
-		this.discountAmount = discountAmount;
+	public void setNetAmount(double netAmount) {
+		this.netAmount = netAmount;
 	}
 
-	public double getNetPayableAmount() {
-		return netPayableAmount;
+	public String getDiscountDetails() {
+		return discountDetails;
 	}
 
-	public void setNetPayableAmount(double netPayableAmount) {
-		this.netPayableAmount = netPayableAmount;
+	public void setDiscountDetails(String discountDetails) {
+		this.discountDetails = discountDetails;
 	}
 
 	public double getPaidAmount() {
@@ -52,20 +52,43 @@ public class PaymentDetails {
 		this.paidAmount = paidAmount;
 	}
 
-	public double getBalanceAmount() {
-		return balanceAmount;
+	public double getBalance() {
+		return balance;
 	}
 
-	public void setBalanceAmount(double balanceAmount) {
-		this.balanceAmount = balanceAmount;
+	public void setBalance(double balance) {
+		this.balance = balance;
 	}
 
-	public PaymentMode getPaymentMode() {
+	public String getPaymentMode() {
 		return paymentMode;
 	}
 
-	public void setPaymentMode(PaymentMode paymentMode) {
+	public void setPaymentMode(String paymentMode) {
 		this.paymentMode = paymentMode;
 	}
 
+	public String getBank() {
+		return bank;
+	}
+
+	public void setBank(String bank) {
+		this.bank = bank;
+	}
+
+	public String getCardNumber() {
+		return cardNumber;
+	}
+
+	public void setCardNumber(String cardNumber) {
+		this.cardNumber = cardNumber;
+	}
+
+	@Override
+	public String toString() {
+		return "PaymentDetails [total=" + total + ", discount=" + discount + ", netAmount=" + netAmount + ", discountDetails=" + discountDetails + ", paidAmount=" + paidAmount + ", balance="
+				+ balance + ", paymentMode=" + paymentMode + ", bank=" + bank + ", cardNumber=" + cardNumber + "]";
+	}
+
+	
 }

@@ -64,8 +64,8 @@ public class PatientRegistrationServiceImpl implements PatientRegistrationServic
 
 	@Override
 	public RegisterResponse register(RegisterRequest request) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return hospitalDAO.register(request);
 	}
 
 }

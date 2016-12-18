@@ -30,4 +30,5 @@ public interface PatientRegistrationService {
 	public List<Authorisation> getAuthorisations();
 	
 	public RegisterResponse register(RegisterRequest request);
+
 }

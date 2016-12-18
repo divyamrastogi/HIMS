@@ -14,7 +14,7 @@ public class Address {
 	private String districtId;
 	private String state;
 	private String stateId;
-	private String pincode;
+	private String pinCode;
 	private String phone;
 
 	public String getAddress() {
@@ -49,12 +49,12 @@ public class Address {
 		this.state = state;
 	}
 
-	public String getPincode() {
-		return pincode;
+	public String getPinCode() {
+		return pinCode;
 	}
 
-	public void setPincode(String pincode) {
-		this.pincode = pincode;
+	public void setPinCode(String pinCode) {
+		this.pinCode = pinCode;
 	}
 
 	public String getCityId() {
@@ -89,4 +89,11 @@ public class Address {
 		this.phone = phone;
 	}
 
+	@Override
+	public String toString() {
+		return "Address [address=" + address + ", city=" + city + ", cityId=" + cityId + ", district=" + district + ", districtId=" + districtId + ", state=" + state + ", stateId=" + stateId
+				+ ", pinCode=" + pinCode + ", phone=" + phone + "]";
+	}
+
+	
 }

@@ -37,6 +37,8 @@ import com.hospital.dto.City;
 import com.hospital.dto.Department;
 import com.hospital.dto.Doctor;
 import com.hospital.dto.LoginResponse;
+import com.hospital.dto.RegisterRequest;
+import com.hospital.dto.RegisterResponse;
 import com.hospital.dto.Source;
 import com.hospital.dto.LoginRequest;
 import com.hospital.factory.ObjectFactory;
@@ -264,7 +266,7 @@ public class Controller {
 		String jsonBody = "";
 		try {
 			jsonBody = getJsonBody(request);
-			LoginRequest req = new ObjectMapper().readValue(jsonBody, LoginRequest.class);
+			LoginRequest req = null;//new ObjectMapper().readValue(jsonBody, LoginRequest.class);
 			username = req.getUsername();
 			password = req.getPassword();
 		} catch (Exception e) {
@@ -313,9 +315,6 @@ public class Controller {
 		if (!initialized) {
 			init();
 		}
-		// welcome(request, response);
-		// String apiKey = request.getHeader("api-key");
-		boolean isValid = true;// verifyApiKey(apiKey);
 		
 		String jsonBody = "";
 		try {
@@ -326,41 +325,23 @@ public class Controller {
 
 		System.out.println(jsonBody);
 
-	  /*  JSONObject jsonObj = new JSONObject(jsonBody);
-		ObjectMapper mapper = new ObjectMapper();
-		User user = mapper.readValue(jsonInString, Address.class);
-*/
-		HttpStatus httpStatus = null;
-		Map<String, Object> responseMap = new HashMap<String, Object>();
-		if (isValid) {
-			LoginResponse loginResponse = loginService.doLogin(null, null);
+		System.out.println("====================================================================");
 
-			String token = null;
-			if (LoginStatus.SUCCESS == loginResponse.getStatus()) {
-				HttpSession session = request.getSession();
-				token = UUID.randomUUID().toString().toUpperCase() + "|" + loginResponse.getUserId() + "|" + Calendar.getInstance().getTimeInMillis();
-				session.setAttribute(token, null);
-			}
-			if (token != null) {
-				Cookie loginCookie = new Cookie(token, null);
-				Cookie tokenCookie = new Cookie("token", token);
-
-				// setting cookie to expiry in 30 mins
-				loginCookie.setMaxAge(30 * 60);
-				tokenCookie.setMaxAge(30 * 60);
-				response.addCookie(loginCookie);
-				response.addCookie(tokenCookie);
-			}
-			responseMap.put("status", loginResponse.getStatus().name());
-			responseMap.put("description", loginResponse.getDescription());
-			httpStatus = HttpStatus.OK;
-		} else {
-			httpStatus = HttpStatus.UNAUTHORIZED;
+		try {
+			Gson gson = new Gson();
+			RegisterRequest registerRequest = gson.fromJson(jsonBody,RegisterRequest.class);
+			//Map<String,Object> map = new ObjectMapper().readValue(jsonBody, Map.class);
+			//RegisterRequest registerRequest = new ObjectMapper().readValue(jsonBody, RegisterRequest.class);
+			System.out.println(registerRequest.toString());
+			
+			RegisterResponse resp = patientRegistrationService.register(registerRequest);
+			
+			response.setContentType("application/json");
+			response.getWriter().write(gson.toJson(resp));
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-
-		System.out.println("This is running fine !!");
-		// ResponseEntity<Map<String, Object>> httpResponse = new ResponseEntity<Map<String, Object>>(responseMap, httpStatus);
-		return null;
+	   return null;
 	}
 
 	private boolean verifyApiKey(String apiKey) {
@@ -375,8 +356,8 @@ public class Controller {
 
 		initialized = true;
 
-		apiKeyStore = new APIKeyStore();
-		apiKeyStore.loadAPIKeys();
+		//apiKeyStore = new APIKeyStore();
+		//apiKeyStore.loadAPIKeys();
 		ObjectFactory objectFactory = new ObjectFactory();
 		objectFactory.initialize();
 

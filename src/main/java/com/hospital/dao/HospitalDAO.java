@@ -5,14 +5,18 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.sql.Date;
+import java.text.SimpleDateFormat;
 
 import com.hospital.dto.Authorisation;
 import com.hospital.dto.Bank;
 import com.hospital.dto.City;
 import com.hospital.dto.Department;
 import com.hospital.dto.Doctor;
+import com.hospital.dto.RegisterRequest;
+import com.hospital.dto.RegisterResponse;
 import com.hospital.factory.JdbcConnectionPool;
 import com.hospital.dto.Source;
 
@@ -22,6 +26,11 @@ import com.hospital.dto.Source;
  * @author Shivam Khare
  */
 public class HospitalDAO {
+
+	private static final String ONE = "1";
+	private static final String TWO = "2";
+	private static final String THREE = "3";
+	private static final String ZERO = "0";
 
 	private JdbcConnectionPool jdbcConnectionPool;
 
@@ -210,7 +219,7 @@ public class HospitalDAO {
 		try {
 			PreparedStatement prepstmt = con.prepareStatement(stmt);
 
-		//	prepstmt.setString(1, src);
+			// prepstmt.setString(1, src);
 			ResultSet result = prepstmt.executeQuery();
 			while (result.next()) {
 				Source source = new Source();
@@ -231,7 +240,8 @@ public class HospitalDAO {
 
 	public List<City> getCities(String prefix) {
 
-		String stmt = "select AREAID, AREANM, DISTRICTNAME, STATENAME, c.DISTRICTID, c.STATEID from CITYS c JOIN DISTRICTS d ON (c.DISTRICTID = d.DISTRICTID) JOIN STATES s ON (c.STATEID = s.STATEID) where AREANM LIKE '" + prefix + "%'";
+		String stmt = "select AREAID, AREANM, DISTRICTNAME, STATENAME, c.DISTRICTID, c.STATEID from CITYS c JOIN DISTRICTS d ON (c.DISTRICTID = d.DISTRICTID) JOIN STATES s ON (c.STATEID = s.STATEID) where AREANM LIKE '"
+				+ prefix + "%'";
 
 		Connection con = jdbcConnectionPool.getConnectionFromPool();
 		List<City> cities = new ArrayList<City>();
@@ -281,5 +291,112 @@ public class HospitalDAO {
 			jdbcConnectionPool.returnConnectionToPool(con);
 		}
 		return auths;
+	}
+
+	public RegisterResponse register(RegisterRequest request) {
+		String maxId = "select max(REGID) REGID, max(REGNO) REGNO from PATIENTSREGISTRAION";
+		Connection con = jdbcConnectionPool.getConnectionFromPool();
+		int regId = 0, regNo = 0;
+		String sql = "INSERT INTO PATIENTSREGISTRAION (REGID, REGTM, REGDT, REGNO, FNAME, ADDR1, PINCODE, PHONE1, SUBCOMPANYID, CREGNO, AGE, SEX, DEPTID, DOCID, CONSULTFEES, FEESCOLLECTED, REGFEES, "
+				+ "BILLNO, REFERTYPE, REFERID, PAID, DUE, DOB, DISCOUNT, NETAMT, DISTRICTID, STATEID, STATENEW, CITYNEW, CITYID, AUTHID) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+
+		RegisterResponse response = new RegisterResponse();
+		try {
+			PreparedStatement prepstmt = con.prepareStatement(maxId);
+
+			ResultSet result = prepstmt.executeQuery();
+			if (result.next()) {
+				regId = result.getInt("REGID");
+				regNo = result.getInt("REGNO");
+			}
+			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+			java.util.Date dob = df.parse(request.getBasicInfo().getDob());
+			int index = 1;
+			java.util.Date today = new java.util.Date();
+			prepstmt = con.prepareStatement(sql);
+			prepstmt.setInt(index++, regId+1);
+			prepstmt.setDate(index++, new java.sql.Date(today.getTime()));
+
+			today.setHours(0);
+
+			prepstmt.setDate(index++, new Date (today.getTime()));
+			prepstmt.setInt(index++, regNo+1);
+
+			prepstmt.setString(index++, request.getBasicInfo().getName());
+			prepstmt.setString(index++, request.getAddress().getAddress());
+			prepstmt.setString(index++, request.getAddress().getPinCode());
+			prepstmt.setString(index++, request.getAddress().getPhone());
+			prepstmt.setString(index++, request.getConsultantDepartment().getDepartment());
+			prepstmt.setString(index++, "0");
+			prepstmt.setInt(index++, getAge(request.getBasicInfo().getDob()));
+			prepstmt.setString(index++, request.getBasicInfo().getSex());
+			prepstmt.setString(index++, request.getConsultantDepartment().getDepartment());
+			prepstmt.setString(index++, request.getConsultantDepartment().getDoctorId());
+			prepstmt.setDouble(index++, request.getPaymentDetails().getTotal());
+			prepstmt.setDouble(index++, request.getPaymentDetails().getPaidAmount());
+			prepstmt.setDouble(index++, request.getPaymentDetails().getNetAmount());
+			prepstmt.setString(index++, null);
+			prepstmt.setString(index++, getReferType(request.getHospitalInfo().getSourceType()));
+			prepstmt.setString(index++, request.getHospitalInfo().getSourceId());
+			prepstmt.setDouble(index++, request.getPaymentDetails().getPaidAmount());
+			prepstmt.setDouble(index++, request.getPaymentDetails().getNetAmount() - request.getPaymentDetails().getPaidAmount());
+			prepstmt.setDate(index++, new Date(dob.getTime()));
+			prepstmt.setDouble(index++, request.getPaymentDetails().getDiscount());
+			prepstmt.setDouble(index++, request.getPaymentDetails().getNetAmount());
+			prepstmt.setString(index++, request.getAddress().getDistrictId());
+			prepstmt.setString(index++, request.getAddress().getStateId());
+			prepstmt.setString(index++, request.getAddress().getState());
+			prepstmt.setString(index++, request.getAddress().getCity());
+			prepstmt.setString(index++, request.getAddress().getCityId());
+			prepstmt.setString(index++, request.getPaymentDetails().getDiscountDetails());
+
+			int rowsAffected = prepstmt.executeUpdate();
+
+			if(rowsAffected == 1) {
+				response.setStatus("success");
+				response.setDescription("Patient is successfully registered !");
+			} else {
+				response.setStatus("failure");
+				response.setDescription("Patient registration failed !");
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("HospitalDAO.getAuthorisations - db operation failed." + e.getMessage());
+			response.setStatus("failure");
+			response.setDescription("Patient registration failed !");
+		} finally {
+			jdbcConnectionPool.returnConnectionToPool(con);
+		}
+
+		return response;
+	}
+
+	private String getReferType(String sourceType) {
+
+		switch (sourceType) {
+		case "SELF":
+			return ONE;
+		case "REFERRAL":
+			return TWO;
+		case "ORG":
+			return THREE;
+		}
+		return ZERO;
+	}
+
+	private int getAge(String dob) {
+		try {
+			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+			df.parse(dob);
+			GregorianCalendar birth = new GregorianCalendar();
+			GregorianCalendar now = new GregorianCalendar();
+			birth.setTime(df.parse(dob));
+			now.setTime(new java.util.Date());
+			return (now.get(GregorianCalendar.YEAR) - birth.get(GregorianCalendar.YEAR));
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+		return 0;
 	}
 }
