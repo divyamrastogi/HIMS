@@ -97,7 +97,7 @@ webpackJsonp([0],{
 	                _this.router.navigate(['login']);
 	            }
 	            else if (/SUCCESS/i.test(response.status)) {
-	                _this.router.navigate(['register']);
+	                _this.router.navigate(['registration']);
 	            }
 	        });
 	    };
@@ -6236,7 +6236,7 @@ webpackJsonp([0],{
 	                _this.router.navigate(['login']);
 	            }
 	            else if (/SUCCESS/i.test(response.status)) {
-	                _this.router.navigate(['register']);
+	                _this.router.navigate(['registration']);
 	            }
 	        }, function (response) {
 	            Materialize.toast('Some error occured. ' + JSON.stringify(response), 1000);
@@ -6313,4 +6313,4 @@ webpackJsonp([0],{
 /***/ }
 
 });
-//# sourceMappingURL=app.396cb617b52064d96618.js.map
+//# sourceMappingURL=app.5d224434bd8a4ac9ecef.js.map
