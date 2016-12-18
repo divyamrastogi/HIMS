@@ -72,7 +72,12 @@ export class RegistrationComponent implements OnInit {
 	}
 
 	setBalanceAmount(netAmount: number, paidAmount: number): void {
-		this.registration.paymentDetails.balance = netAmount - paidAmount;
+		if (paidAmount <= netAmount) {
+			this.registration.paymentDetails.balance = netAmount - paidAmount;
+		} else {
+			this.registration.paymentDetails.paidAmount = '';
+			Materialize.toast('You are trying adding more paid amount than the bill.', 4000);
+		}
 		this.updateTextFields();
 	}
 
@@ -91,9 +96,7 @@ export class RegistrationComponent implements OnInit {
 	}
 
 	selectCity(location: any): void {
-		this.registration.address.state = location.state;
-		this.registration.address.district = location.district;
-		this.registration.address.city = location.name;
+		this.registration.address = Object.assign(this.registration.address, location);
 		this.cities = null;
 		Materialize.updateTextFields();
 	}
