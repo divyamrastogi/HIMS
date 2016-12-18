@@ -75,8 +75,9 @@ export class HospitalService {
 		return this.get(this.sourcesUrl + source);
 	}
 
-	getCities(prefix: string): Promise<Object[]> {
-		return this.get(this.citiesUrl + prefix);
+	getCities(prefix: string) {
+		return this.http.get(this.citiesUrl + prefix)
+			.map(response => response.json());
 	}
 
 	private handleError(error: any): Promise<any> {

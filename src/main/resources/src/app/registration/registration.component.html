@@ -76,7 +76,7 @@
                             </div>
                             <div class="col m4 s12 input-field autocomplete">
                                 <input required id="city" name="city" type="text" class="validate"
-                                    (ngModelChange)="getCities($event)"
+                                    (input)="term$.next($event.target.value)"
                                     [(ngModel)]="registration.address.city">
                                 <label for="city">Area/City</label>
                                 <ul class="autocomplete-list" *ngIf="registration.address.city && cities && cities.length > 0">

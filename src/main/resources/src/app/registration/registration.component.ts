@@ -2,6 +2,9 @@
 import { Component, EventEmitter, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Params }   from '@angular/router';
 import { Registration } from './registration';
+import { Subject } from 'rxjs/Subject';
+import 'rxjs/add/operator/debounceTime';
+
 import { HospitalService } from '../services/hospital.service';
 
 @Component({
@@ -18,16 +21,18 @@ export class RegistrationComponent implements OnInit {
 	doctor: any;
 	authorizedPersons: any;
 	banks: any;
+	term$ = new Subject<string>();
+
 	constructor(
 		private hospitalService: HospitalService,
 		private route: ActivatedRoute
 	) { }
 
-	getCities($event: string): void {
-		$event ? this.hospitalService.getCities($event)
-			.then((cities) => {
+	getCities(term: string): void {
+		this.hospitalService.getCities(term)
+			.subscribe((cities) => {
 				return this.cities = cities;
-			}) : '';
+			});
 	}
 
 	getSources($event: string): void {
@@ -116,6 +121,9 @@ export class RegistrationComponent implements OnInit {
 				}
 			}
 		});
+		this.term$
+			.debounceTime(400)
+			.subscribe(term => this.getCities(term))
 		this.getTurnNumber();
 		this.getDepartments();
 		this.registration = new Registration();
