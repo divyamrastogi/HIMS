@@ -1,0 +1,269 @@
+<form class="registration col s12" materialize (ngSubmit)="registerPatient()"
+    #registrationForm="ngForm">
+    <div class="registration-form">
+        <div class="row">
+            <div class="col s12">
+                <ul class="tabs">
+                    <li class="tab col s6"><a class="active" href="#new-registration">New Registration</a></li>
+                    <li class="tab col s6"><a href="#sub-visit">Sub Visit</a></li>
+                </ul>
+            </div>
+            <div class="col s12">
+                <div class="">
+                    <div id="new-registration">
+                        <h4 class="teal-text">New Registration</h4>
+                        <h5 class="">Patient Basic Information</h5>
+                        <div class="row">
+                            <div class="col m4">
+                                <div class="row">
+                                    <div class="col s3 input-field">
+                                        <select name="title" required materialize="material_select" [(ngModel)]="registration.basicInfo.title">
+                                          <option value="" disabled selected>Title</option>
+                                          <option value="1">Mr.</option>
+                                          <option value="2">Mrs.</option>
+                                          <option value="3">Master</option>
+                                          <option value="4">Baby</option>
+                                        </select>
+                                        <label>Select Title</label>
+                                    </div>
+                                    <div class="col s9 input-field">
+                                        <input required id="name" name="name" type="text" class="validate"
+                                            [(ngModel)]="registration.basicInfo.name">
+                                        <label for="name">Patient Name</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col m8">
+                                <div class="row">
+                                    <div class="col m4 s12 input-field">
+                                        <input required id="dob" name="dob" class="datepicker" type="date"
+                                            datepicker [(ngModel)]="registration.basicInfo.dob">
+                                        <label for="dob">DOB</label>
+                                    </div>
+                                    <div class="col m2 s12 input-field">
+                                        <select name="sex" materialize="material_select" [(ngModel)]="registration.basicInfo.sex">
+                                          <option value="" disabled selected>Sex</option>
+                                          <option value="m">Male</option>
+                                          <option value="f">Female</option>
+                                        </select>
+                                        <label>Sex</label>
+                                    </div>
+                                    <div class="col m2 s12 input-field">
+                                        <select name="relation" materialize="material_select" [(ngModel)]="registration.basicInfo.relation">
+                                          <option value="" disabled selected>Relation</option>
+                                          <option value="son">S/o</option>
+                                          <option value="daughter">D/o</option>
+                                          <option value="wife">W/o</option>
+                                          <option value="husband">H/o</option>
+                                          <option value="carer">C/o</option>
+                                        </select>
+                                        <label>Relation</label>
+                                    </div>
+                                    <div class="col m4 s12 input-field">
+                                        <input id="relativeName" name="relativeName" type="text" class="validate"
+                                            [(ngModel)]="registration.basicInfo.relativeName">
+                                        <label for="relativeName">Relative Name</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <h5 class="">Address</h5>
+                        <div class="row">
+                            <div class="col m4 s12 input-field">
+                                <input id="address" name="address" type="text" class="validate"
+                                    required [(ngModel)]="registration.address.address">
+                                <label for="address">Address</label>
+                            </div>
+                            <div class="col m4 s12 input-field autocomplete">
+                                <input required id="city" name="city" type="text" class="validate"
+                                    (ngModelChange)="getCities($event)"
+                                    [(ngModel)]="registration.address.city">
+                                <label for="city">Area/City</label>
+                                <ul class="autocomplete-list" *ngIf="registration.address.city && cities && cities.length > 0">
+                                    <li *ngFor="let city of cities" (click)="selectCity(city)">{{city.name}}</li>
+                                </ul>
+                            </div>
+                            <div class="col m4 s12 input-field">
+                                <select name="state" required materialize="material_select" [(ngModel)]="registration.address.state">
+                                  <option value="" disabled selected>State</option>
+                                  <option value="WEST BENGAL">West Bengal</option>
+                                  <option value="Andhra Pradesh">Andhra Pradesh</option>
+                                  <option value="Karnataka">Karnataka</option>
+                                  <option value="TAMILNADU">Tamil Nadu</option>
+                                </select>
+                                <label>State</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col m4 s12 input-field">
+                                <input required id="district" name="district" type="text" class="validate"
+                                    required [(ngModel)]="registration.address.district">
+                                <label for="district">District</label>
+                            </div>
+                            <div class="col m4 s12 input-field">
+                                <input required id="pin" name="pin" type="text" class="validate"
+                                    pattern="^[1-9][0-9]{5}$" [(ngModel)]="registration.address.pinCode">
+                                <label for="pin">PIN Code</label>
+                            </div>
+                            <div class="col m4 s12 input-field">
+                                <input required id="phone" name="phone" type="text" class="validate"
+                                    pattern="^[1-9][0-9]{8,}$" [(ngModel)]="registration.address.phone">
+                                <label for="phone">Phone</label>
+                            </div>
+                        </div>
+                        <h5>Hospital Information</h5>
+                        <div class="row">
+                            <div class="col m3 s12 input-field">
+                                <select name="source" required materialize="material_select"
+                                    (ngModelChange)="getSources($event)"
+                                    [(ngModel)]="registration.hospitalInfo.sourceType">
+                                  <option value="" disabled selected>Source</option>
+                                  <option value="SELF">Self</option>
+                                  <option value="REFERRAL">Referral</option>
+                                  <option value="ORG">Organization/Institution</option>
+                                </select>
+                                <label>Source</label>
+                            </div>
+                            <div class="col m3 s12 input-field" *ngIf="registration.hospitalInfo.sourceType != 'SELF'">
+                                <select required name="source" materialize="material_select"
+                                    [materializeSelectOptions]="sources"
+                                    [(ngModel)]="registration.hospitalInfo.sourceId">
+                                  <option value="" disabled selected>Source</option>
+                                  <option *ngFor="let option of sources" [value]="option.sourceid">{{option.name}}</option>
+                                </select>
+                                <label>Select Source</label>
+                            </div>
+                            <div class="col m3 s12 input-field">
+                                <input required id="turn" name="turn" type="text" class="validate"
+                                    [(ngModel)]="registration.hospitalInfo.turn">
+                                <label for="turn">Turn Number</label>
+                            </div>
+                            <div class="col m3 s12 input-field">
+                                <select required name="category" materialize="material_select"
+                                    [(ngModel)]="registration.hospitalInfo.category">
+                                  <option value="" disabled selected>Category</option>
+                                  <option value="paying">Paying</option>
+                                  <option value="credit">Credit</option>
+                                  <option value="free">Free</option>
+                                  <option value="staff">Staff</option>
+                                  <option value="others">Others</option>
+                                </select>
+                                <label>Category</label>
+                            </div>
+                        </div>
+                        <h5>Consultant Doctor/Department</h5>
+                        <div class="row">
+                            <div class="col m6 s12 input-field">
+                                <select required name="department" materialize="material_select"
+                                    [materializeSelectOptions]="departments"
+                                    [(ngModel)]="registration.consultantDepartment.department"
+                                    (ngModelChange)="getDoctors($event)">
+                                  <option value="" disabled selected>Department</option>
+                                  <option *ngFor="let option of departments" [value]="option.id">{{option.name}}</option>
+                                </select>
+                                <label>Department</label>
+                            </div>
+                            <div class="col m6 s12 input-field">
+                                <select required name="doctor" materialize="material_select"
+                                    [materializeSelectOptions]="doctors"
+                                    [(ngModel)]="doctor" (ngModelChange)="setFees(doctor)">
+                                  <option value="" disabled selected>Doctor</option>
+                                  <option *ngFor="let option of doctors" [ngValue]="option">{{option.name}}</option>
+                                </select>
+                                <label>Doctor</label>
+                            </div>
+                        </div>
+                        <div class="payment-container" *ngIf="registration.hospitalInfo.category !== 'free'">
+                            <h5>Payment Details</h5>
+                            <div class="row">
+                                <div class="col m4 s12 input-field input-field">
+                                    <input id="total" name="total" type="text" class="validate" disabled
+                                        [(ngModel)]="registration.paymentDetails.total">
+                                    <label for="total">Total Amount</label>
+                                </div>
+                                <div class="col m4 s12 input-field" *ngIf="registration.paymentDetails.total && registration.paymentDetails.total >= 0">
+                                    <input id="discountPercent" name="discountPercent" type="text"
+                                        class="validate" [(ngModel)]="discountPercent"
+                                        (ngModelChange)="calculateDiscount(registration.paymentDetails.total, $event)">
+                                    <label for="discountPercent">Discount(%)</label>
+                                </div>
+                                <div class="col m4 s12 input-field">
+                                    <input id="discount" disabled name="discount" type="text" class="validate"
+                                        [(ngModel)]="registration.paymentDetails.discount">
+                                    <label for="discount">Discount</label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col m4 s12 input-field">
+                                    <input disabled id="netAmount" name="netAmount" type="text" class="validate"
+                                        [(ngModel)]="registration.paymentDetails.netAmount">
+                                    <label for="netAmount">Net Amount</label>
+                                </div>
+                                <div class="col m4 s12 input-field" *ngIf="discountPercent && discountPercent > 0">
+                                    <select name="discountDetails" materialize="material_select"
+                                        [(ngModel)]="registration.paymentDetails.discountDetails"
+                                        [materializeSelectOptions]="authorizedPersons">
+                                      <option value="" disabled selected>Discount Details</option>
+                                      <option *ngFor="let option of authorizedPersons" [ngValue]="option.id">{{option.name}}</option>
+                                    </select>
+                                    <label>Discount Details</label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col m6 s12 input-field">
+                                    <input id="paidAmount" name="paidAmount" type="text" class="validate"
+                                        [(ngModel)]="registration.paymentDetails.paidAmount"
+                                        (ngModelChange)="setBalanceAmount(registration.paymentDetails.netAmount, $event)">
+                                    <label for="paidAmount">Paid Amount</label>
+                                </div>
+                                <div class="col m6 s12 input-field">
+                                    <input id="balance" disabled name="balance" type="text" class="validate"
+                                        [(ngModel)]="registration.paymentDetails.balance">
+                                    <label for="balance">Balance</label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col m6 s12 input-field">
+                                    <select name="paymentMode" materialize="material_select" [(ngModel)]="registration.paymentDetails.paymentMode"
+                                        (ngModelChange)="getListOfBanks()">
+                                      <option value="" disabled selected>Select mode</option>
+                                      <option value="cash">Cash</option>
+                                      <option value="card">Card</option>
+                                      <option value="others">Others</option>
+                                    </select>
+                                    <label>Payment Mode</label>
+                                </div>
+                            </div>
+                            <div class="row" *ngIf="registration.paymentDetails.paymentMode == 'card'">
+                                <div class="col m6 s12 input-field">
+                                    <select name="bankName" materialize="material_select" [materializeSelectOptions]="banks"
+                                        [(ngModel)]="registration.paymentDetails.bank">
+                                      <option value="" disabled selected>Select Bank</option>
+                                      <option *ngFor="let option of banks" [ngValue]="option.id">{{option.name}}</option>
+                                    </select>
+                                    <label>Bank Name</label>
+                                </div>
+                                <div class="col m6 s12 input-field">
+                                    <input id="cardNumber" name="cardNumber" type="text" class="validate"
+                                        required [(ngModel)]="registration.paymentDetails.cardNumber">
+                                    <label for="cardNumber">Card Number</label>
+                                </div>
+                            </div>
+                            <div class="row" *ngIf="registration.paymentDetails.paymentMode == 'others'">
+                                <div class="col m4 s12 input-field">
+                                    <input id="others" name="others" type="text" class="validate"
+                                        [(ngModel)]="registration.paymentDetails.others">
+                                    <label for="others">Others</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="button-container">
+                            <button type="submit" class="btn waves-effect" name="button">Register</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="sub-visit" class="col s12">Test 2</div>
+    </div>
+</form>

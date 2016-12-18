@@ -1,0 +1,22 @@
+<form class="col s12" materialize (ngSubmit)="login(credentials)">
+    <div class="login-form">
+        <h4>User Login</h4>
+        <div class="">
+            <div class="input-field col s12">
+                <input [(ngModel)]="credentials.username" required name="username"
+                    id="username" type="text" class="validate">
+                <label for="username">Username</label>
+            </div>
+        </div>
+        <div class="">
+            <div class="input-field col s12">
+                <input [(ngModel)]="credentials.password" required name="password"
+                    id="password" type="password" class="validate">
+                <label for="password">Password</label>
+            </div>
+        </div>
+        <div class="button-container">
+            <button type="submit" class="btn waves-effect" name="button">Log In</button>
+        </div>
+    </div>
+</form>

@@ -1,0 +1,43 @@
+.registration-form {
+    background-color: white;
+    margin: 0 auto;
+    border: solid 1px #e4e4e4;
+    border-radius: 4px;
+    margin-top: 44px;
+}
+.button-container button {
+    margin-top: 20px;
+}
+#new-registration,
+#sub-visit {
+    padding: 0 16px 32px;
+    .row {
+        margin-bottom: 0;
+    }
+}
+#new-registration h5 {
+    margin-bottom: 20px;
+}
+.autocomplete {
+    position: relative;
+    .autocomplete-list {
+        position: absolute;
+        border: solid 1px #f1f1f1;
+        background: white;
+        z-index: 1;
+        left: 10px;
+        right: 10px;
+        top: 40px;
+        max-height: 200px;
+        overflow-y: scroll;
+        color: #4db6ac;
+        margin-top: 6px;
+        li {
+            padding: 12px;
+            cursor: pointer;
+        }
+        li:hover {
+            background-color: #f6f6f6;
+        }
+    }
+}
