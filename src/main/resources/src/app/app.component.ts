@@ -20,7 +20,7 @@ export class AppComponent implements OnInit {
 				if (/FAILURE/i.test(response.status)) {
 					this.router.navigate(['login']);
 				} else if (/SUCCESS/i.test(response.status)) {
-					this.router.navigate(['register']);
+					this.router.navigate(['registration']);
 				}
 			});
 	}
