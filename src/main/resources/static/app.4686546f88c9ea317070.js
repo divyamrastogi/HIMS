@@ -182,10 +182,10 @@ webpackJsonp([0],{
 	        return this.http.get(this.turnUrl)
 	            .toPromise()
 	            .then(function (response) {
-	            if (!response.json().turnno) {
+	            if (!response.json().turn) {
 	                return Promise.resolve(Math.floor(Math.random() * 100));
 	            }
-	            return response.json().turnno;
+	            return response.json().turn;
 	        })
 	            .catch(this.handleError);
 	    };
@@ -6047,18 +6047,17 @@ webpackJsonp([0],{
 	                .then(function (sources) {
 	                return _this.sources = sources;
 	            }, function (err) {
-	                console.log(err);
-	                return _this.sources = [{
-	                        sourceid: 'SMC123',
-	                        name: 'Dr. Some one'
-	                    }];
+	                Materialize.toast('Could not fetch Sources. Try later.', 4000);
 	            });
 	        }
 	    };
 	    RegistrationComponent.prototype.getTurnNumber = function () {
 	        var _this = this;
 	        this.hospitalService.getTurnNumber()
-	            .then(function (turnNum) { return _this.registration.hospitalInfo.turn = turnNum; });
+	            .then(function (turnNum) {
+	            _this.registration.hospitalInfo.turn = turnNum;
+	            _this.updateTextFields();
+	        });
 	    };
 	    RegistrationComponent.prototype.getDepartments = function () {
 	        var _this = this;
@@ -6106,11 +6105,21 @@ webpackJsonp([0],{
 	    RegistrationComponent.prototype.selectCity = function (location) {
 	        this.registration.address = Object.assign(this.registration.address, location);
 	        this.cities = null;
-	        Materialize.updateTextFields();
+	        this.updateTextFields();
 	    };
 	    RegistrationComponent.prototype.registerPatient = function () {
+	        var _this = this;
 	        this.registration.basicInfo.dob = $('#dob').val();
-	        this.hospitalService.registerPatient(this.registration);
+	        this.hospitalService.registerPatient(this.registration)
+	            .then(function (response) {
+	            if (/success/i.test(response.status)) {
+	                Materialize.toast('Registration Successful.', 4000);
+	                _this.registration = new registration_1.Registration();
+	            }
+	            else {
+	                Materialize.toast('Registration Failure.', 4000);
+	            }
+	        });
 	    };
 	    RegistrationComponent.prototype.ngOnInit = function () {
 	        var _this = this;
@@ -6329,4 +6338,4 @@ webpackJsonp([0],{
 /***/ }
 
 });
-//# sourceMappingURL=app.9f7358a42394483b65db.js.map
+//# sourceMappingURL=app.4686546f88c9ea317070.js.map
