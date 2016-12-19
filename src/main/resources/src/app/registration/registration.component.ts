@@ -42,18 +42,17 @@ export class RegistrationComponent implements OnInit {
 				.then((sources) => {
 					return this.sources = sources;
 				}, (err) => {
-					console.log(err);
-					return this.sources = [{
-						sourceid: 'SMC123',
-						name: 'Dr. Some one'
-					}];
+					Materialize.toast('Could not fetch Sources. Try later.', 4000);
 				})
 		}
 	}
 
 	getTurnNumber(): void {
 		this.hospitalService.getTurnNumber()
-			.then(turnNum => this.registration.hospitalInfo.turn = turnNum);
+			.then(turnNum => {
+				this.registration.hospitalInfo.turn = turnNum
+				this.updateTextFields();
+			});
 	}
 
 	getDepartments(): void {
@@ -104,12 +103,20 @@ export class RegistrationComponent implements OnInit {
 	selectCity(location: any): void {
 		this.registration.address = Object.assign(this.registration.address, location);
 		this.cities = null;
-		Materialize.updateTextFields();
+		this.updateTextFields();
 	}
 
 	registerPatient(): void {
 		this.registration.basicInfo.dob = $('#dob').val();
-		this.hospitalService.registerPatient(this.registration);
+		this.hospitalService.registerPatient(this.registration)
+			.then((response) => {
+				if (/success/i.test(response.status)) {
+					Materialize.toast('Registration Successful.', 4000);
+					this.registration = new Registration();
+				} else {
+					Materialize.toast('Registration Failure.', 4000);
+				}
+			});
 	}
 
 	ngOnInit(): void {

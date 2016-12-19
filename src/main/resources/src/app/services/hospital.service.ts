@@ -55,10 +55,10 @@ export class HospitalService {
 		return this.http.get(this.turnUrl)
 			.toPromise()
 			.then((response) => {
-				if (!response.json().turnno) {
+				if (!response.json().turn) {
 					return Promise.resolve(Math.floor(Math.random() * 100));
 				}
-				return response.json().turnno as number
+				return response.json().turn as number
 			})
 			.catch(this.handleError);
 	}
